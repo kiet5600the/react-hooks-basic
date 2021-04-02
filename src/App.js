@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.scss';
+import queryString from 'query-string';
 import ColorBox from './components/ColorBox';
+import Pagination from './components/Pagination';
 import PostList from './components/PostList';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
@@ -12,6 +14,17 @@ function App() {
     { id: 2, title: "blue" },
     { id: 3, title: "red" },
   ]);
+
+  const [postList, setPostList] = useState([]);
+  const [pagination, setPagination] = useState({
+    _page: 1,
+    _limit: 10,
+    _totalRows: 1
+  })
+  const [filters, setFilters] = useState({
+    _page: 1,
+    _limit: 10,
+  })
 
   function handleTodoClick(todo) {
     const index = todoList.findIndex(x => x.id === todo.id);
@@ -33,16 +46,18 @@ function App() {
     setTodoList(newTodoList);
   }
 
-  const [postList, setPostList] = useState([]);
 
   useEffect(() => {
     async function fetchPostList() {
       try {
-        const requestUrl = 'http://js-post-api.herokuapp.com/api/posts?_limit=10&_page=1'
+
+        const paramString = queryString.stringify(filters);
+        const requestUrl = `http://js-post-api.herokuapp.com/api/posts?${paramString}`;
         const response = await fetch(requestUrl);
         const responseJSON = await response.json();
-        const { data } = responseJSON;
+        const { data, pagination } = responseJSON;
         setPostList(data);
+        setPagination(pagination);
       } catch (error) {
         console.log("error fetch post list: ", error.message)
 
@@ -50,7 +65,14 @@ function App() {
     }
 
     fetchPostList()
-  }, [])
+  }, [filters])
+
+  function handlePageChange(newPage) {
+    setFilters({
+      ...filters,
+      _page: newPage
+    })
+  }
 
   return (
     <div className="app">
@@ -58,6 +80,10 @@ function App() {
       {/* <TodoForm onSubmit={handleTodoFormSubmit} /> */}
       {/* <TodoList todos={todoList} onTodoClick={handleTodoClick} /> */}
       <PostList posts={postList} />
+      <Pagination
+        pagination={pagination}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }
