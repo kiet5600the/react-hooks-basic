@@ -7,6 +7,7 @@ import PostList from './components/PostList';
 import TodoForm from './components/TodoForm';
 import TodoList from './components/TodoList';
 import PostFilterForm from './components/PostFilterForm';
+import Clock from './components/Clock';
 
 
 function App() {
@@ -87,14 +88,15 @@ function App() {
   return (
     <div className="app">
       <h1>Welcome to React Hooks!</h1>
+      <Clock />
       {/* <TodoForm onSubmit={handleTodoFormSubmit} /> */}
       {/* <TodoList todos={todoList} onTodoClick={handleTodoClick} /> */}
-      <PostFilterForm onSubmit={handleFilterChange} />
+      {/* <PostFilterForm onSubmit={handleFilterChange} />
       <PostList posts={postList} />
       <Pagination
         pagination={pagination}
         onPageChange={handlePageChange}
-      />
+      /> */}
     </div>
   );
 }
